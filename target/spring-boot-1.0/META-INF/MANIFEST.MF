@@ -1,8 +1,0 @@
-Manifest-Version: 1.0
-Created-By: IntelliJ IDEA
-Built-By: lehieu
-Build-Jdk: Eclipse Temurin 17.0.14
-Implementation-Version: 1.0
-Implementation-Vendor-Id: com.lehieu_java-web
-Main-Class: ${start-class}
-

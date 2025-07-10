@@ -1,61 +1,59 @@
 package com.javaweb.api.admin;
 
-
-import com.javaweb.model.dto.AssignmentBuildingDTO;
-import com.javaweb.model.dto.BuildingDTO;
-
-import com.javaweb.model.response.ResponseDTO;
-import com.javaweb.repository.BuildingRepository;
-import com.javaweb.service.BuildingService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.web.bind.annotation.*;
-
-
 import java.util.List;
+import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.javaweb.api.model.dto.AssignmentBuildingDTO;
+import com.javaweb.api.model.dto.BuildingDTO;
+import com.javaweb.api.model.response.BuildingSearchResponse;
+import com.javaweb.api.model.response.StaffResponseDTO;
+import com.javaweb.api.service.BuildingService;
 
 
-@RestController(value = "buildingAPIOfAdmin")
+
+@RestController
 @RequestMapping("/api/building")
 public class BuildingAPI {
-
-    @Autowired
-    @Lazy
-    private BuildingService buildingService;
-    @Autowired
-    private BuildingRepository buildingRepository;
-
-
-    @PostMapping
-    public BuildingDTO addOrUpdateBuilding(@RequestBody BuildingDTO buildingDTO){
-        return buildingDTO;
+	
+	@Autowired
+	private BuildingService buildingService;
+	
+	
+    @DeleteMapping(value = "/delete")
+    public ResponseEntity<?> deleteBuilding(@RequestParam(name = "ids" , required = false) List<Long> ids) {
+    	buildingService.deleteBuilding(ids);
+    	return ResponseEntity.ok("");
     }
-
-    @DeleteMapping("/{ids}")
-    public void deleteBuilding(@PathVariable List<Long> ids){
-        System.out.println("ok");
+    
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<BuildingSearchResponse>> searchBuilding(@RequestParam Map<String,Object> params,
+    																	@RequestParam(name = "typeCode" , required = false) List<String> typeCode){
+    		List<BuildingSearchResponse> result = buildingService.searchBuilding(params,typeCode);
+    		return ResponseEntity.ok(result);
     }
-
-    @GetMapping("/staffs/{id}")
-    public ResponseDTO listStaffs(@PathVariable Long id){
-        ResponseDTO responseDTO = new ResponseDTO();
-        responseDTO = buildingService.listStaff(id);
-        return responseDTO;
+    
+    @PostMapping(value = "/add_update")
+    public ResponseEntity<?> addOrUpdate(@RequestBody BuildingDTO buildingDTO) {
+    	buildingService.addOrUpdate(buildingDTO);
+    	return ResponseEntity.ok("");
     }
-
-    @PostMapping("/assignment")
-    public void assignment(@RequestBody AssignmentBuildingDTO assignmentBuildingDTO){
-        buildingService.assignmentBuilding(assignmentBuildingDTO);
+    
+    @GetMapping(value = "/staffs/{id}")
+    public ResponseEntity<List<StaffResponseDTO>> listStaff(@PathVariable Long id){
+    	List<StaffResponseDTO> listStaff = buildingService.listStaff(id);
+    	return ResponseEntity.ok(listStaff);
     }
-
-    @DeleteMapping("/delete/{id}")
-    public void deleteBuilding(@PathVariable Long id){
-        buildingService.deleteBuilding(id);
+    
+    @PutMapping(value = "/assignmentbuilding")
+    public ResponseEntity<?> assignmentBuilding(@RequestBody AssignmentBuildingDTO assignmentBuildingDTO) {
+    	buildingService.assignmentBuilding(assignmentBuildingDTO);
+    	return ResponseEntity.ok("");
     }
-
-    @PostMapping(value = "/addOrUpdate")
-    public void addOrUpdate(@RequestBody BuildingDTO buildingDTO){
-        buildingService.addOrUpdateBuilding(buildingDTO);
+    
+    @GetMapping("/test")
+    public ResponseEntity<?> testToken() {
+        return ResponseEntity.ok("Token OK");
     }
 }
